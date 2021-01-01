@@ -8,6 +8,7 @@ const Deck = () => {
 	const [deck, setDeck] = useState(null);
 	const [drawn, setDrawn] = useState([]);
 	const [autoDraw, setAutoDraw] = useState(false);
+	const [shuffle, setShuffle] = useState(false);
 	const timerRef = useRef(null);
 
 	useEffect(() => {
@@ -52,19 +53,41 @@ const Deck = () => {
 		};
 	}, [deck, autoDraw, setAutoDraw]);
 
+	useEffect(() => {
+		if (shuffle) {
+			async function shuffleDeck() {
+				setAutoDraw(false);
+				setDeck(null);
+				let d = await axios.get(`${API_BASE_URL}/new/shuffle`);
+				setDeck(d.data);
+				setDrawn([]);
+			}
+			shuffleDeck();
+		}
+		return () => setShuffle(false);
+	}, [shuffle]);
+
 	const toggleAutoDraw = () => {
 		setAutoDraw(auto => !auto);
 	};
 
+	const shuffleCards = () => {
+		setShuffle(true);
+	};
 	const cards = drawn.map(c => <Card key={c.id} src={c.image} name={c.name} />);
 
 	return (
 		<div className="Deck">
 			{deck ? (
-				<button className="Deck-draw" onClick={toggleAutoDraw}>
-					{autoDraw ? 'STOP' : 'KEEP'} drawing a card
-				</button>
+				<div>
+					<button className="Deck-draw" onClick={toggleAutoDraw}>
+						{autoDraw ? 'STOP' : 'KEEP'} drawing a card
+					</button>
+				</div>
 			) : null}
+			<button className="Deck-draw" onClick={shuffleCards}>
+				Shuffle Deck
+			</button>
 			<div className="Deck-cardarea">{cards}</div>
 		</div>
 	);
