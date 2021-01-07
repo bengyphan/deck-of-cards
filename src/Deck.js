@@ -81,7 +81,7 @@ const Deck = () => {
 			{deck ? (
 				<div>
 					<button className="Deck-draw" onClick={toggleAutoDraw}>
-						{autoDraw ? 'STOP' : 'KEEP'} drawing a card
+						{autoDraw ? 'STOP' : 'START'} drawing a card
 					</button>
 				</div>
 			) : null}
